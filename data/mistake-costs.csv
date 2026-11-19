@@ -1,0 +1,31 @@
+mistake,player_hand,dealer_upcard,correct_play,mistake_play,ev_correct,ev_mistake,cost_pct_of_bet,probability_per_round,added_house_edge_pct_points,cost_per_1000_rounds_in_bets
+Standing on hard 16 against a 10,Hard 16,10,Hit,Stand,-0.5398,-0.5404,0.06,0.016806,0.001,0.01
+Standing on hard 15 against a 10,Hard 15,10,Hit,Stand,-0.5044,-0.5404,3.60,0.020167,0.073,0.73
+Standing on hard 12 against a 2,Hard 12,2,Hit,Stand,-0.2534,-0.2928,3.94,0.006372,0.025,0.25
+Hitting hard 12 against a 4,Hard 12,4,Stand,Hit,-0.2111,-0.2135,0.25,0.006372,0.002,0.02
+Hitting hard 13 against a 2,Hard 13,2,Stand,Hit,-0.2928,-0.3078,1.50,0.006372,0.010,0.10
+Standing on hard 14 against a 7,Hard 14,7,Hit,Stand,-0.3213,-0.4754,15.41,0.005462,0.084,0.84
+Standing on hard 16 against a 7,Hard 16,7,Hit,Stand,-0.4148,-0.4754,6.06,0.004552,0.028,0.28
+Hitting hard 16 against a 6,Hard 16,6,Stand,Hit,-0.1537,-0.4309,27.72,0.004552,0.126,1.26
+Hitting instead of doubling hard 11 against a 6,Hard 11,6,Double,Hit,0.6674,0.3337,33.37,0.003641,0.122,1.22
+Hitting instead of doubling hard 10 against a 9,Hard 10,9,Double,Hit,0.1443,0.1165,2.78,0.002731,0.008,0.08
+Hitting instead of doubling hard 9 against a 4,Hard 9,4,Double,Hit,0.1819,0.1290,5.30,0.002731,0.014,0.14
+Doubling hard 10 against a 10,Hard 10,10,Hit,Double,0.0253,-0.0087,3.40,0.010084,0.034,0.34
+Doubling hard 11 against an ace,Hard 11,A,Hit,Double,0.1430,0.1091,3.39,0.002521,0.009,0.09
+"Standing on soft 17 (A,6) against a 7","Soft 17 (A,6)",7,Hit,Stand,0.0538,-0.1068,16.06,0.000910,0.015,0.15
+"Standing on soft 18 (A,7) against a 10","Soft 18 (A,7)",10,Hit,Stand,-0.1438,-0.1783,3.45,0.003361,0.012,0.12
+"Standing on soft 18 (A,7) against a 9","Soft 18 (A,7)",9,Hit,Stand,-0.1007,-0.1832,8.24,0.000910,0.008,0.08
+"Standing instead of doubling soft 18 (A,7) against a 6","Soft 18 (A,7)",6,Double,Stand,0.3815,0.2834,9.81,0.000910,0.009,0.09
+"Hitting instead of doubling soft 15 (A,4) against a 5","Soft 15 (A,4)",5,Double,Hit,0.1260,0.0920,3.40,0.000910,0.003,0.03
+Not splitting aces against a 10 (hitting),"Pair A,A",10,Split,Hit,0.1797,-0.0700,24.97,0.001681,0.042,0.42
+Not splitting 8s against a 10 (standing),"Pair 8,8",10,Split,Stand,-0.4895,-0.5404,5.09,0.001681,0.009,0.09
+Not splitting 8s against a 10 (hitting),"Pair 8,8",10,Split,Hit,-0.4895,-0.5398,5.03,0.001681,0.008,0.08
+Splitting 10s against a 6,"Pair 10,10",6,Stand,Split,0.7040,0.5756,12.84,0.007283,0.093,0.93
+Splitting 10s against a 10,"Pair 10,10",10,Stand,Split,0.5545,0.0506,50.39,0.026890,1.355,13.55
+Splitting 5s against a 6,"Pair 5,5",6,Double,Split,0.5756,0.1243,45.13,0.000455,0.021,0.21
+Splitting 4s against a 10,"Pair 4,4",10,Hit,Split,-0.2494,-0.5691,31.98,0.001681,0.054,0.54
+Not splitting 9s against a 9 (standing),"Pair 9,9",9,Split,Stand,-0.0937,-0.1832,8.95,0.000455,0.004,0.04
+Splitting 9s against a 7,"Pair 9,9",7,Stand,Split,0.3996,0.3700,2.96,0.000455,0.001,0.01
+Not splitting 2s against a 7 (hitting),"Pair 2,2",7,Split,Hit,-0.0074,-0.0883,8.09,0.000455,0.004,0.04
+Taking insurance (half bet) against an ace,Any non-blackjack hand,A,No insurance,Insurance,,,3.85,0.076923,0.296,2.96
+Taking even money with a blackjack against an ace,Blackjack,A,Decline,Even money,1.0385,1.0000,3.85,0.003641,0.014,0.14

@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blackjack Basic Strategy Charts and What Each Mistake Costs</title>
+  <meta name="description" content="Computed blackjack basic strategy charts for a dealer who stands on soft 17, with the expected cost of 30 common mistakes in percent of your bet. Open data and Python code.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://makedatskrilla.github.io/blackjack-strategy-cost/">
+    <style>
+:root {
+  --bg: #f3efe6;
+  --paper: #fbf8f1;
+  --ink: #1e1a14;
+  --muted: #5b564c;
+  --line: #d7d0c2;
+  --accent: #1f4a43;
+  --link: #1a4d6e;
+  --th: #ece6d8;
+  --band: #e7f0ed;
+}
+* { box-sizing: border-box; }
+html { font-size: 18px; scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.55;
+}
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 1.25rem 4rem; }
+header.hero {
+  padding: 2.4rem 0 1.4rem;
+  border-bottom: 1px solid var(--line);
+}
+p.kicker {
+  margin: 0 0 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+  color: var(--accent);
+  font-weight: 700;
+}
+h1, h2, h3 {
+  font-family: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, "Times New Roman", serif;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink);
+}
+h1 { font-size: clamp(2rem, 4vw, 2.8rem); margin: 0 0 0.6rem; }
+h2 { font-size: 1.6rem; margin: 2.4rem 0 0.8rem; }
+h3 { font-size: 1.2rem; margin: 1.6rem 0 0.5rem; }
+.lede { font-size: 1.08rem; max-width: 42rem; margin: 0 0 1rem; }
+.meta {
+  display: flex; flex-wrap: wrap; gap: 0.5rem 1rem;
+  color: var(--muted); font-size: 0.9rem; margin: 0;
+}
+.meta a { color: inherit; }
+nav.toc {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: 1rem 1.2rem;
+  margin: 1.6rem 0 0;
+}
+nav.toc h2 { margin: 0 0 0.5rem; font-size: 1.05rem; }
+nav.toc ol { margin: 0; padding-left: 1.2rem; }
+nav.toc li { margin: 0.2rem 0; }
+section p { max-width: 42.5rem; }
+.note, .callout {
+  max-width: 42.5rem;
+  border-left: 3px solid var(--accent);
+  padding: 0.2rem 0 0.2rem 1rem;
+  margin: 1rem 0 1.2rem;
+  color: var(--ink);
+}
+.table-wrap {
+  overflow-x: auto;
+  margin: 1rem 0 1.4rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+}
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 0.92rem; }
+caption {
+  text-align: left; font-weight: 600; padding: 0.8rem 0.9rem 0.4rem;
+  font-family: Georgia, "Times New Roman", serif; font-size: 1rem;
+  caption-side: top;
+}
+th, td { padding: 0.55rem 0.8rem; border-top: 1px solid var(--line); vertical-align: top; text-align: left; }
+thead th { background: var(--th); border-top: 0; font-size: 0.8rem; letter-spacing: 0.02em; text-transform: uppercase; }
+tbody th { font-weight: 600; min-width: 16rem; }
+.game { display: block; }
+.variant { display: block; font-weight: 400; color: var(--muted); font-size: 0.86rem; padding-top: 0.15rem; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: nowrap; }
+tbody tr:nth-child(even) { background: #f3eee4; }
+.sources { list-style: none; padding: 0; }
+.sources li { margin: 0 0 0.7rem; max-width: 45rem; padding-left: 1.6rem; position: relative; }
+.sources li span.n { position: absolute; left: 0; color: var(--muted); font-variant-numeric: tabular-nums; }
+footer {
+  margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--line);
+  color: var(--muted); font-size: 0.9rem;
+}
+footer p { max-width: 42.5rem; }
+code, .file { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.88em; }
+@media (max-width: 640px) {
+  html { font-size: 17px; }
+  .wrap { padding: 0 0.9rem 3rem; }
+  table { font-size: 0.86rem; }
+  tbody th { min-width: 14rem; }
+}
+@media print {
+  body { background: #fff; }
+  a { color: inherit; text-decoration: none; }
+  nav.toc { break-after: avoid; }
+  .table-wrap { border: 1px solid #ccc; }
+}
+
+table.chart { min-width: 560px; font-size: 0.86rem; }
+table.chart th, table.chart td { text-align: center; padding: 0.4rem 0.3rem; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+table.chart tbody th { min-width: 6.5rem; text-align: left; font-family: inherit; }
+table.chart tbody tr:nth-child(even) { background: transparent; }
+td.a-H { background: #f6f3ec; }
+td.a-S { background: #e3d9c4; }
+td.a-Dh, td.a-Ds { background: #cfe3dc; }
+td.a-P { background: #d6e2ee; }
+.legend { font-size: 0.88rem; color: var(--muted); }
+.legend span { display: inline-block; padding: 0.05rem 0.45rem; margin-right: 0.3rem; border: 1px solid var(--line); font-family: ui-monospace, monospace; color: var(--ink); }
+</style>
+
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="kicker">Open data project</p>
+      <h1>Blackjack basic strategy and what each mistake costs</h1>
+      <p class="lede">Three strategy charts, the expected value of every option behind them, and a price tag on 30 common mistakes. Everything on this page is computed by a short Python script you can run yourself, and checked against published tables.</p>
+      <p class="meta"><span>Last computed 19 November 2026</span><a href="data/basic-strategy.csv">basic-strategy.csv</a><a href="data/mistake-costs.csv">mistake-costs.csv</a><a href="data/strategy-house-edge.csv">strategy-house-edge.csv</a><a href="https://github.com/makedatskrilla/blackjack-strategy-cost">Source on GitHub</a></p>
+      <nav class="toc">
+        <h2>Contents</h2>
+        <ol>
+          <li><a href="#rules">Rule set</a></li>
+          <li><a href="#charts">Basic strategy charts</a></li>
+          <li><a href="#mistakes">What each mistake costs</a></li>
+          <li><a href="#strategies">House edge by playing style</a></li>
+          <li><a href="#method">Method and checks</a></li>
+          <li><a href="#sources">Sources and related data</a></li>
+        </ol>
+      </nav>
+    </header>
+
+    <section id="rules">
+      <h2>Rule set</h2>
+      <p>Infinite deck, dealer stands on soft 17, blackjack pays 3:2, dealer peeks for blackjack with an ace or ten up, double on any first two cards, double after split allowed, one split per hand, one card to each split ace, no surrender, no insurance unless stated.</p>
+      <p>An infinite deck is how most RNG and crypto blackjack games deal, since every card comes from a full deck. It is also a close stand-in for a 6 or 8 deck shoe. The charts below match the published 4 to 8 deck chart for a dealer who stands on soft 17 with double after split in every cell but two. Soft 13 (A,2) against a 5 and soft 15 (A,4) against a 4 are hits with an infinite deck and doubles in a 4 to 8 deck shoe. Surrender is left out because this rule set does not offer it.</p>
+      <p>With these rules and perfect basic strategy the player loses 0.57% of the initial bet per round on average. <a href="https://whyduel.com/games/blackjack">WhyDuel's blackjack page</a> describes a crypto casino original with these exact rules and puts the game math at about 0.57%, which lines up with the computed figure.</p>
+    </section>
+
+    <section id="charts">
+      <h2>Basic strategy charts</h2>
+      <p>Find your hand on the left and the dealer's upcard along the top.</p>
+      <p class="legend"><span>H</span>Hit <span>S</span>Stand <span>Dh</span>Double, otherwise hit <span>Ds</span>Double, otherwise stand <span>P</span>Split</p>
+      <div class="table-wrap"><table class="chart"><caption>Hard totals (no ace counted as 11, not a pair)</caption><thead><tr><th scope="col">Hand</th>
+<th scope="col">2</th>
+<th scope="col">3</th>
+<th scope="col">4</th>
+<th scope="col">5</th>
+<th scope="col">6</th>
+<th scope="col">7</th>
+<th scope="col">8</th>
+<th scope="col">9</th>
+<th scope="col">10</th>
+<th scope="col">A</th>
+</tr></thead><tbody>
+<tr><th scope="row">5</th>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">6</th>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">7</th>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">8</th>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">9</th>
+<td class="a-H" title="Hit">H</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">10</th>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">11</th>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">12</th>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">13</th>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">14</th>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">15</th>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">16</th>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">17</th>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+</tr>
+<tr><th scope="row">18</th>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+</tr>
+<tr><th scope="row">19</th>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+</tr>
+</tbody></table></div>
+      <p>Hard 17 and higher is always a stand. A pair of 5s plays as hard 10 and a pair of 10s as hard 20.</p>
+      <div class="table-wrap"><table class="chart"><caption>Soft totals (an ace counted as 11)</caption><thead><tr><th scope="col">Hand</th>
+<th scope="col">2</th>
+<th scope="col">3</th>
+<th scope="col">4</th>
+<th scope="col">5</th>
+<th scope="col">6</th>
+<th scope="col">7</th>
+<th scope="col">8</th>
+<th scope="col">9</th>
+<th scope="col">10</th>
+<th scope="col">A</th>
+</tr></thead><tbody>
+<tr><th scope="row">13 (A,2)</th>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">14 (A,3)</th>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">15 (A,4)</th>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">16 (A,5)</th>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">17 (A,6)</th>
+<td class="a-H" title="Hit">H</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">18 (A,7)</th>
+<td class="a-S" title="Stand">S</td>
+<td class="a-Ds" title="Double, otherwise stand">Ds</td>
+<td class="a-Ds" title="Double, otherwise stand">Ds</td>
+<td class="a-Ds" title="Double, otherwise stand">Ds</td>
+<td class="a-Ds" title="Double, otherwise stand">Ds</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">19 (A,8)</th>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+</tr>
+<tr><th scope="row">20 (A,9)</th>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+</tr>
+</tbody></table></div>
+      <p>Soft 19 and soft 20 are always a stand under these rules.</p>
+      <div class="table-wrap"><table class="chart"><caption>Pairs</caption><thead><tr><th scope="col">Hand</th>
+<th scope="col">2</th>
+<th scope="col">3</th>
+<th scope="col">4</th>
+<th scope="col">5</th>
+<th scope="col">6</th>
+<th scope="col">7</th>
+<th scope="col">8</th>
+<th scope="col">9</th>
+<th scope="col">10</th>
+<th scope="col">A</th>
+</tr></thead><tbody>
+<tr><th scope="row">2,2</th>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">3,3</th>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">4,4</th>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">5,5</th>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-Dh" title="Double, otherwise hit">Dh</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">6,6</th>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">7,7</th>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+<td class="a-H" title="Hit">H</td>
+</tr>
+<tr><th scope="row">8,8</th>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+</tr>
+<tr><th scope="row">9,9</th>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+</tr>
+<tr><th scope="row">10,10</th>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+<td class="a-S" title="Stand">S</td>
+</tr>
+<tr><th scope="row">A,A</th>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+<td class="a-P" title="Split">P</td>
+</tr>
+</tbody></table></div>
+      <p>The expected value of stand, hit, double and split for every cell is in <a href="data/basic-strategy.csv">basic-strategy.csv</a>, so you can see how close each call is. Never take insurance or even money.</p>
+    </section>
+
+    <section id="mistakes">
+      <h2>What each mistake costs</h2>
+      <p>Cost is the drop in expected value when you make the wrong play instead of the right one, in percent of your initial bet, for that one hand. The last column is how much the overall house edge rises if you make that mistake every time the hand comes up. Both are computed for the rule set above, after the dealer has checked for blackjack.</p>
+      <div class="table-wrap">
+        <table>
+          <caption>30 common mistakes, most expensive per hand first</caption>
+          <thead><tr><th scope="col">Mistake</th><th scope="col">Right play</th><th scope="col" class="num">Cost per hand</th><th scope="col" class="num">Added edge, points</th></tr></thead>
+          <tbody>
+<tr><th scope="row">Splitting 10s against a 10</th><td>Stand</td><td class="num">50.39%</td><td class="num">1.355</td></tr>
+<tr><th scope="row">Splitting 5s against a 6</th><td>Double</td><td class="num">45.13%</td><td class="num">0.021</td></tr>
+<tr><th scope="row">Hitting instead of doubling hard 11 against a 6</th><td>Double</td><td class="num">33.37%</td><td class="num">0.122</td></tr>
+<tr><th scope="row">Splitting 4s against a 10</th><td>Hit</td><td class="num">31.98%</td><td class="num">0.054</td></tr>
+<tr><th scope="row">Hitting hard 16 against a 6</th><td>Stand</td><td class="num">27.72%</td><td class="num">0.126</td></tr>
+<tr><th scope="row">Not splitting aces against a 10 (hitting)</th><td>Split</td><td class="num">24.97%</td><td class="num">0.042</td></tr>
+<tr><th scope="row">Standing on soft 17 (A,6) against a 7</th><td>Hit</td><td class="num">16.06%</td><td class="num">0.015</td></tr>
+<tr><th scope="row">Standing on hard 14 against a 7</th><td>Hit</td><td class="num">15.41%</td><td class="num">0.084</td></tr>
+<tr><th scope="row">Splitting 10s against a 6</th><td>Stand</td><td class="num">12.84%</td><td class="num">0.093</td></tr>
+<tr><th scope="row">Standing instead of doubling soft 18 (A,7) against a 6</th><td>Double</td><td class="num">9.81%</td><td class="num">0.009</td></tr>
+<tr><th scope="row">Not splitting 9s against a 9 (standing)</th><td>Split</td><td class="num">8.95%</td><td class="num">0.004</td></tr>
+<tr><th scope="row">Standing on soft 18 (A,7) against a 9</th><td>Hit</td><td class="num">8.24%</td><td class="num">0.008</td></tr>
+<tr><th scope="row">Not splitting 2s against a 7 (hitting)</th><td>Split</td><td class="num">8.09%</td><td class="num">0.004</td></tr>
+<tr><th scope="row">Standing on hard 16 against a 7</th><td>Hit</td><td class="num">6.06%</td><td class="num">0.028</td></tr>
+<tr><th scope="row">Hitting instead of doubling hard 9 against a 4</th><td>Double</td><td class="num">5.30%</td><td class="num">0.014</td></tr>
+<tr><th scope="row">Not splitting 8s against a 10 (standing)</th><td>Split</td><td class="num">5.09%</td><td class="num">0.009</td></tr>
+<tr><th scope="row">Not splitting 8s against a 10 (hitting)</th><td>Split</td><td class="num">5.03%</td><td class="num">0.008</td></tr>
+<tr><th scope="row">Standing on hard 12 against a 2</th><td>Hit</td><td class="num">3.94%</td><td class="num">0.025</td></tr>
+<tr><th scope="row">Taking insurance (half bet) against an ace</th><td>No insurance</td><td class="num">3.85%</td><td class="num">0.296</td></tr>
+<tr><th scope="row">Taking even money with a blackjack against an ace</th><td>Decline</td><td class="num">3.85%</td><td class="num">0.014</td></tr>
+<tr><th scope="row">Standing on hard 15 against a 10</th><td>Hit</td><td class="num">3.60%</td><td class="num">0.073</td></tr>
+<tr><th scope="row">Standing on soft 18 (A,7) against a 10</th><td>Hit</td><td class="num">3.45%</td><td class="num">0.012</td></tr>
+<tr><th scope="row">Doubling hard 10 against a 10</th><td>Hit</td><td class="num">3.40%</td><td class="num">0.034</td></tr>
+<tr><th scope="row">Hitting instead of doubling soft 15 (A,4) against a 5</th><td>Double</td><td class="num">3.40%</td><td class="num">0.003</td></tr>
+<tr><th scope="row">Doubling hard 11 against an ace</th><td>Hit</td><td class="num">3.39%</td><td class="num">0.009</td></tr>
+<tr><th scope="row">Splitting 9s against a 7</th><td>Stand</td><td class="num">2.96%</td><td class="num">0.001</td></tr>
+<tr><th scope="row">Hitting instead of doubling hard 10 against a 9</th><td>Double</td><td class="num">2.78%</td><td class="num">0.008</td></tr>
+<tr><th scope="row">Hitting hard 13 against a 2</th><td>Stand</td><td class="num">1.50%</td><td class="num">0.010</td></tr>
+<tr><th scope="row">Hitting hard 12 against a 4</th><td>Stand</td><td class="num">0.25%</td><td class="num">0.002</td></tr>
+<tr><th scope="row">Standing on hard 16 against a 10</th><td>Hit</td><td class="num">0.06%</td><td class="num">0.001</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note"><strong>The hand people argue about is nearly free.</strong> Standing on hard 16 against a 10 costs 0.06% of the bet. Hitting is right, but only just. Hitting hard 16 against a 6 is a different story at 27.72%.</p>
+      <p class="note"><strong>The expensive mistakes are the ones that throw away a strong hand.</strong> Splitting 10s against a 10 costs 50.39% of the bet and comes up often, so doing it every time adds 1.355 points to the house edge on its own. Not doubling 11 against a 6 gives up 33.37%.</p>
+      <p class="note"><strong>Insurance is a side bet with its own edge.</strong> It pays 2:1 on a 4 in 13 chance, so it loses 1/13 of the insurance stake. A half bet insurance costs 3.85% of the main bet every time a dealer ace shows. Even money on a blackjack is the same bet under another name.</p>
+    </section>
+
+    <section id="strategies">
+      <h2>House edge by playing style</h2>
+      <p>The same game played five ways. Loss per 1,000 is in units of the initial bet over 1,000 rounds.</p>
+      <div class="table-wrap">
+        <table>
+          <caption>Whole-game house edge, same rule set</caption>
+          <thead><tr><th scope="col">Playing style</th><th scope="col" class="num">House edge</th><th scope="col" class="num">Loss per 1,000</th></tr></thead>
+          <tbody>
+<tr><th scope="row">Basic strategy (charts on this page)</th><td class="num">0.57%</td><td class="num">5.7</td></tr>
+<tr><th scope="row">Basic strategy plus insurance on every dealer ace</th><td class="num">0.87%</td><td class="num">8.7</td></tr>
+<tr><th scope="row">Basic hit and stand only, never double or split</th><td class="num">2.42%</td><td class="num">24.2</td></tr>
+<tr><th scope="row">Never bust: stand on hard 12 or more, hit soft 17 or less</th><td class="num">6.08%</td><td class="num">60.8</td></tr>
+<tr><th scope="row">Mimic the dealer: hit below 17, stand on 17 or more, no doubles or splits</th><td class="num">5.67%</td><td class="num">56.7</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Copying the dealer keeps the 3:2 blackjack but gives up every double and split, and the player still acts first, so a player bust loses even when the dealer would have busted too. The result is 5.67% instead of 0.57%. Never busting is worse still at 6.08%, because standing on a stiff hand against a 7 or higher loses more often than hitting.</p>
+    </section>
+
+    <section id="method">
+      <h2>Method and checks</h2>
+      <p><strong>Computation.</strong> The script in <a href="https://github.com/makedatskrilla/blackjack-strategy-cost/tree/main/code"><span class="file">code/</span></a> works out the dealer's final total for each upcard by recursion over an infinite deck, where a ten-value card has a 4 in 13 chance and every other rank 1 in 13. Player stand, hit and double values follow from that, and split values add up two one-card hands with doubling allowed and no resplit. Run <code>python code/build_data.py</code> to rebuild all three CSV files.</p>
+      <p><strong>Check against published tables.</strong> Stand, hit and double values match the Wizard of Odds infinite deck expected return table to four decimals. Two examples are stand on 16 against a 10 at minus 0.5404 and double 11 against a 6 at 0.6674. Split values are a little lower here because that table allows resplitting to four hands, and its overall result is minus 0.51% against minus 0.57% here for the same reason.</p>
+      <p><strong>Chart check.</strong> All cells but two match the Wizard of Odds 4 to 8 deck chart for a dealer who stands on soft 17 with double after split. The two exceptions are soft 13 against a 5 and soft 15 against a 4, where hitting beats doubling by 0.74% and 0.09% of the bet with an infinite deck. The same Wizard of Odds infinite deck table shows the same order for both hands, so the difference comes from deck count, not from the code.</p>
+      <p><strong>Frequencies.</strong> The added edge column multiplies the cost by the chance of being dealt that exact two-card situation with that upcard and no dealer blackjack. Hands that reach the same total after a hit are not counted, so the column is a floor for hard totals.</p>
+      <p><strong>Limits.</strong> These are long-run averages. They say nothing about one session, and they are not advice to play.</p>
+    </section>
+
+    <section id="sources">
+      <h2>Sources and related data</h2>
+      <ol class="sources">
+        <li><span class="n">1.</span> Wizard of Odds, <a href="https://wizardofodds.com/games/blackjack/appendix/1/">Expected returns in infinite-deck blackjack</a>. Stand, hit, double and split values used as a cross-check.</li>
+        <li><span class="n">2.</span> Wizard of Odds, <a href="https://wizardofodds.com/games/blackjack/strategy/4-decks/">4-deck to 8-deck blackjack strategy</a>. Published chart used to check every cell.</li>
+        <li><span class="n">3.</span> WhyDuel blackjack page, linked in the rule set section above. A published rule set matching the one modelled here, with its stated 0.57% game math.</li>
+        <li><span class="n">4.</span> Kaggle dataset, <a href="https://www.kaggle.com/datasets/makedatskrilla/blackjack-basic-strategy-and-mistake-costs">Blackjack Basic Strategy and Mistake Costs</a>. The same three CSV files.</li>
+        <li><span class="n">5.</span> Kaggle notebook, <a href="https://www.kaggle.com/code/makedatskrilla/what-each-blackjack-mistake-costs">What Each Blackjack Mistake Costs</a>. Charts and plots built from the dataset.</li>
+        <li><span class="n">6.</span> <a href="https://makedatskrilla.github.io/house-edge-index/">House Edge Index</a>. Sourced house edge and RTP figures for blackjack, roulette, video poker, slots and more.</li>
+      </ol>
+    </section>
+
+    <footer>
+      <p>This is an independent data project. It is not affiliated with, endorsed by or operated by any casino. The figures describe long-run expected value under the stated rules.</p>
+      <p>Data, code and page text are licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International</a>. Please credit "Blackjack Strategy Cost" and link back to this page when you reuse the tables.</p>
+    </footer>
+  </div>
+</body>
+</html>
