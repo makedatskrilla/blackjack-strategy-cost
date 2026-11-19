@@ -657,18 +657,18 @@ td.a-P { background: #d6e2ee; }
 <tr><th scope="row">Basic strategy</th><td class="num">0.57%</td><td class="num">5.7</td></tr>
 <tr><th scope="row">Basic strategy plus insurance on every dealer ace</th><td class="num">0.87%</td><td class="num">8.7</td></tr>
 <tr><th scope="row">Basic hit and stand only, never double or split</th><td class="num">2.42%</td><td class="num">24.2</td></tr>
-<tr><th scope="row">Never bust: stand on hard 12 or more, hit soft 17 or less</th><td class="num">6.08%</td><td class="num">60.8</td></tr>
+<tr><th scope="row">Never bust: stand on hard 12 or more, hit soft 17 or less, no doubles or splits</th><td class="num">6.08%</td><td class="num">60.8</td></tr>
 <tr><th scope="row">Mimic the dealer: hit below 17, stand on 17 or more, no doubles or splits</th><td class="num">5.67%</td><td class="num">56.7</td></tr>
           </tbody>
         </table>
       </div>
-      <p>Copying the dealer keeps the 3:2 blackjack but gives up every double and split, and the player still acts first, so a player bust loses even when the dealer would have busted too. The result is 5.67% instead of 0.57%. Never busting is worse still at 6.08%, because standing on a stiff hand against a 7 or higher loses more often than hitting.</p>
+      <p>Copying the dealer keeps the 3:2 blackjack but gives up every double and split, and the player still acts first, so a player bust loses even when the dealer would have busted too. The result is 5.67% instead of 0.57%. Never busting is worse still at 6.08%, because standing on a stiff hand against a 7 or higher loses more often than hitting. Allowing doubles and splits in never bust gives about 4.05% under these rules, while the Wizard of Odds figure of 3.91% assumes 8-deck Atlantic City rules.</p>
     </section>
 
     <section id="method">
       <h2>Method and checks</h2>
       <p><strong>Computation.</strong> The script in <a href="https://github.com/makedatskrilla/blackjack-strategy-cost/tree/main/code"><span class="file">code/</span></a> works out the dealer's final total for each upcard by recursion over an infinite deck, where a ten-value card has a 4 in 13 chance and every other rank 1 in 13. Player stand, hit and double values follow from that, and split values add up two one-card hands with doubling allowed and no resplit. Run <code>python code/build_data.py</code> to rebuild all three CSV files.</p>
-      <p><strong>Check against published tables.</strong> Stand, hit and double values match the Wizard of Odds infinite deck expected return table to four decimals. Two examples are stand on 16 against a 10 at minus 0.5404 and double 11 against a 6 at 0.6674. Split values are a little lower here because that table allows resplitting to four hands, and its overall result is minus 0.51% against minus 0.57% here for the same reason.</p>
+      <p><strong>Check against published tables.</strong> Stand, hit and double values match the Wizard of Odds infinite deck expected return table to four decimals. Two examples are stand on 16 against a 10 at minus 0.5404 and double 11 against a 6 at 0.6674. Split values differ because that table resplits up to four hands, and its overall result is minus 0.51% against minus 0.57% here for the same reason.</p>
       <p><strong>Chart check.</strong> All cells but two match the Wizard of Odds 4 to 8 deck chart for a dealer who stands on soft 17 with double after split. The two exceptions are soft 13 against a 5 and soft 15 against a 4, where hitting beats doubling by 0.74% and 0.09% of the bet with an infinite deck. The same Wizard of Odds infinite deck table shows the same order for both hands, so the difference comes from deck count, not from the code.</p>
       <p><strong>Frequencies.</strong> The added edge column multiplies the cost by the chance of being dealt that exact two-card situation with that upcard and no dealer blackjack. Hands that reach the same total after a hit are not counted, so the column is a floor for hard totals.</p>
       <p><strong>Limits.</strong> These are long-run averages. They say nothing about one session, and they are not advice to play.</p>

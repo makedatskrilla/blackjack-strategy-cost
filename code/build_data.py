@@ -172,7 +172,7 @@ srows = [
     ["Basic strategy", ev_basic],
     ["Basic strategy plus insurance on every dealer ace", ev_basic - b.P[11] * ins_cost * 1.0],
     ["Basic hit and stand only, never double or split", policy_game_ev(nods)],
-    ["Never bust: stand on hard 12 or more, hit soft 17 or less", policy_game_ev(never_bust)],
+    ["Never bust: stand on hard 12 or more, hit soft 17 or less, no doubles or splits", policy_game_ev(never_bust)],
     ["Mimic the dealer: hit below 17, stand on 17 or more, no doubles or splits", policy_game_ev(mimic)],
 ]
 with open(os.path.join(OUT, "strategy-house-edge.csv"), "w", newline="") as f:

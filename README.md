@@ -34,7 +34,7 @@ Needs Python 3 and nothing else.
 ## Checks
 
 - Stand, hit and double values match the Wizard of Odds infinite deck table to four decimals: https://wizardofodds.com/games/blackjack/appendix/1/
-- Split values are slightly lower than that table because it allows resplitting to four hands.
+- Split values differ because that table resplits up to four hands.
 - The charts match the Wizard of Odds 4 to 8 deck chart for a dealer who stands on soft 17 with double after split, except soft 13 against a 5 and soft 15 against a 4, which are hits with an infinite deck: https://wizardofodds.com/games/blackjack/strategy/4-decks/
 
 ## Related
