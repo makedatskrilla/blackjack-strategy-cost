@@ -169,7 +169,7 @@ never_bust = make_fixed(lambda t, s, u: (t <= 11) if s == 0 else (t <= 17))  # n
 nods = lambda c1, c2, u: b.ev_hit_best(*state(c1, c2), u)
 ev_basic = policy_game_ev(basic)
 srows = [
-    ["Basic strategy (charts on this page)", ev_basic],
+    ["Basic strategy", ev_basic],
     ["Basic strategy plus insurance on every dealer ace", ev_basic - b.P[11] * ins_cost * 1.0],
     ["Basic hit and stand only, never double or split", policy_game_ev(nods)],
     ["Never bust: stand on hard 12 or more, hit soft 17 or less", policy_game_ev(never_bust)],

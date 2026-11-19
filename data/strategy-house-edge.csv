@@ -1,5 +1,5 @@
 strategy,house_edge_pct,loss_per_1000_bet_units
-Basic strategy (charts on this page),0.57,5.7
+Basic strategy,0.57,5.7
 Basic strategy plus insurance on every dealer ace,0.87,8.7
 "Basic hit and stand only, never double or split",2.42,24.2
 "Never bust: stand on hard 12 or more, hit soft 17 or less",6.08,60.8
